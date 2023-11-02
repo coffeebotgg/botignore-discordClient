@@ -27,20 +27,20 @@ export default class CommandHandler {
 				continue;
 
 			// prod
-			// this.rest.post(Routes.applicationCommands(client.user!.id), {
-			// 	body: command.default.data,
-			// });
+			this.rest.post(Routes.applicationCommands(client.user!.id), {
+				body: command.default.data,
+			});
 
 			// dev
-			this.rest.post(
-				Routes.applicationGuildCommands(
-					client.user!.id,
-					"1101906061113442334"
-				),
-				{
-					body: command.default.data,
-				}
-			);
+			// this.rest.post(
+			// 	Routes.applicationGuildCommands(
+			// 		client.user!.id,
+			// 		"1101906061113442334"
+			// 	),
+			// 	{
+			// 		body: command.default.data,
+			// 	}
+			// );
 
 			// add command to clients collection
 			DiscordClient.addCommand(command);
