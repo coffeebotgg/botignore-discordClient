@@ -2,10 +2,10 @@ import { REST, Routes } from "discord.js";
 import logger from "../utils/logger";
 import { globSync } from "glob";
 import DiscordClient from "../apps/client";
-import Env from "../utils/env.process";
+import env from "../utils/env.process";
 
 export default class CommandHandler {
-	private readonly rest = new REST({ version: "9" }).setToken(Env.token!);
+	private readonly rest = new REST({ version: "9" }).setToken(env.token!);
 	private readonly commands = new Map<string, string>();
 
 	public async loadCommands(client: DiscordClient): Promise<void> {
@@ -27,20 +27,22 @@ export default class CommandHandler {
 				continue;
 
 			// prod
-			this.rest.post(Routes.applicationCommands(client.user!.id), {
-				body: command.default.data,
-			});
-
-			// dev
-			// this.rest.post(
-			// 	Routes.applicationGuildCommands(
-			// 		client.user!.id,
-			// 		"1101906061113442334"
-			// 	),
-			// 	{
-			// 		body: command.default.data,
-			// 	}
-			// );
+			if (env.prod) {
+				this.rest.put(Routes.applicationCommands(client.user!.id), {
+					body: command.default.data,
+				});
+			} else {
+				// https://discord.com/api/oauth2/authorize?client_id=1169750328292429834&permissions=551903332352&scope=bot
+				this.rest.post(
+					Routes.applicationGuildCommands(
+						client.user!.id,
+						"1133399514707935344"
+					),
+					{
+						body: command.default.data,
+					}
+				);
+			}
 
 			// add command to clients collection
 			DiscordClient.addCommand(command);

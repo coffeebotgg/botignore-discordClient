@@ -21,33 +21,8 @@ export default class DiscordClient extends Client {
 
 	constructor() {
 		super({
-			intents: [
-				GatewayIntentBits.DirectMessageReactions,
-				GatewayIntentBits.DirectMessageTyping,
-				GatewayIntentBits.DirectMessages,
-				GatewayIntentBits.GuildEmojisAndStickers,
-				GatewayIntentBits.GuildIntegrations,
-				GatewayIntentBits.GuildInvites,
-				GatewayIntentBits.GuildMembers,
-				GatewayIntentBits.GuildMessageReactions,
-				GatewayIntentBits.GuildMessageTyping,
-				GatewayIntentBits.GuildMessages,
-				GatewayIntentBits.GuildPresences,
-				GatewayIntentBits.GuildScheduledEvents,
-				GatewayIntentBits.GuildVoiceStates,
-				GatewayIntentBits.GuildWebhooks,
-				GatewayIntentBits.Guilds,
-				GatewayIntentBits.MessageContent,
-			],
-			partials: [
-				Partials.Channel,
-				Partials.GuildMember,
-				Partials.GuildScheduledEvent,
-				Partials.Message,
-				Partials.Reaction,
-				Partials.ThreadMember,
-				Partials.User,
-			],
+			intents: [GatewayIntentBits.Guilds],
+			partials: [],
 			shards: "auto",
 		});
 	}
@@ -96,3 +71,6 @@ export default class DiscordClient extends Client {
 		return client.applications;
 	}
 }
+
+// run start
+new DiscordClient().start();
