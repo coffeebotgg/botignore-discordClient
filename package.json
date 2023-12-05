@@ -5,7 +5,6 @@
 	"main": "index.js",
 	"scripts": {
 		"dev:start-client": "nodemon ./src/apps/client.ts",
-		"dev:start-server": "nodemon ./src/apps/server.ts",
 		"build": "tsc",
 		"pm2:start-dev": "pm2 start ./ecosystem.config.js --env development",
 		"pm2:start-prod": "pm2 start ./ecosystem.config.js --env production",

@@ -1,40 +1,81 @@
-import { EmbedBuilder } from "discord.js";
+import {
+	EmbedBuilder,
+	StringSelectMenuBuilder,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+} from "discord.js";
 import { colors, emojis } from "../../constants/global";
+import { selectmenuId, buttonId } from "../../constants/customId";
+import env from "../../utils/env.process";
+import { InitOptions } from "../selectMenu/options";
 
-const init = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Gitignore template")
-	.setColor(colors.success as any);
 const error = new EmbedBuilder()
 	.setDescription(`${emojis.error} Something went wrong! Try again later`)
 	.setColor(colors.error as any);
-const code = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Select a code")
-	.setColor(colors.success as any);
-const application = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Select an application")
-	.setColor(colors.success as any);
-const framework = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Select a framework")
-	.setColor(colors.success as any);
-const IDE = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Select an IDE")
-	.setColor(colors.success as any);
-const templates = new EmbedBuilder()
-	.setTitle("Gitignore")
-	.setDescription("Select a template")
-	.setColor(colors.success as any);
+
+const buttons = (backEnabled: boolean = false, uid: string) => {
+	const buttons = new ActionRowBuilder();
+	const Generate = new ButtonBuilder()
+		.setURL(`${env.host}/api/v1/generate/${uid}`)
+		.setLabel("Download")
+		.setStyle(ButtonStyle.Link);
+	const Back = new ButtonBuilder()
+		.setCustomId(buttonId.back)
+		.setLabel("Back")
+		.setStyle(ButtonStyle.Secondary)
+		.setEmoji("◀️")
+		.setDisabled(!backEnabled);
+	const Reset = new ButtonBuilder()
+		.setCustomId(buttonId.reset)
+		.setLabel("Reset")
+		.setStyle(ButtonStyle.Danger)
+		.setEmoji("🗑️");
+
+	buttons.addComponents(Generate, Back, Reset);
+
+	return buttons;
+};
+
+const embedGen = (text: string, options: object[]) => {
+	const embed = new EmbedBuilder()
+		.setTitle("Gitignore")
+		.setDescription(
+			`
+			${text}\n
+			Select what you want to add to your gitignore.
+			You can select multiple options.
+		`
+		)
+		.addFields(
+			options.map((option: any) => {
+				return {
+					name: "\u200b",
+					value: option.label,
+					inline: true,
+				};
+			})
+		)
+		.setColor(colors.success as any);
+
+	return embed;
+};
+
+const init = () => {
+	const embed = embedGen("Init Options", []);
+	const rows = new ActionRowBuilder();
+	const selectMenu = new StringSelectMenuBuilder()
+		.setCustomId(selectmenuId.select)
+		.setPlaceholder("Select template menu")
+		.addOptions(InitOptions);
+	rows.addComponents(selectMenu);
+
+	return { embed, rows };
+};
 
 export {
-	init as initEmbed,
 	error as errorEmbed,
-	code as codeEmbed,
-	application as applicationEmbed,
-	framework as frameworkEmbed,
-	IDE as IDEEmbed,
-	templates as templatesEmbed,
+	init as initEmbed,
+	embedGen,
+	buttons as buttonsEmbed,
 };
