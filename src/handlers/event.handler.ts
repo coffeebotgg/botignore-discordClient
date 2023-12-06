@@ -40,7 +40,7 @@ export default class EventHandler {
 		logger.client(`✅ Loaded ${loadedEvents.length} events!`);
 
 		// internal event ready
-		client.once("ready", (...args) => this.Ready(client));
+		client.once("ready", () => this.Ready(client));
 	}
 
 	// ready event to let us know the client is ready and logged in as <displayName>

@@ -1,6 +1,5 @@
 import "./utils/processes";
 import DiscordClient from "./apps/client";
-import Server from "./apps/server";
 import logger from "./utils/logger";
 
 /**
@@ -11,7 +10,7 @@ export default class Snowball {
 	public async start() {
 		await logger.init();
 
-		Promise.all([new Server().start(), new DiscordClient().start()]);
+		Promise.all([new DiscordClient().start()]);
 	}
 }
 

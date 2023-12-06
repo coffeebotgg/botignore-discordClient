@@ -60,6 +60,43 @@ class logger {
 		this.logger.debug(message);
 	}
 
+	public static cache(message: string): void {
+		// new logger with level 'server'
+		const cacheLogger = createLogger({
+			// server with blue color
+			levels: {
+				cache: 0,
+			},
+			level: "cache",
+			format: format.combine(
+				format.timestamp({ format: "DD-MM-YYYY HH:mm:ss" }),
+				format.printf(
+					(info) => `${info.timestamp} ${info.level}: ${info.message}`
+				)
+			),
+			transports: [
+				new transports.Console({
+					format: format.combine(
+						format.colorize({ colors: { cache: "bold cyan" } }),
+						format.printf(
+							(info) =>
+								`${info.timestamp} ${info.level}: ${info.message}`
+						)
+					),
+				}),
+				new transports.DailyRotateFile({
+					filename: "logs/%DATE%.log",
+					datePattern: "YYYY-MM-DD",
+					zippedArchive: false,
+					maxSize: "20m",
+					maxFiles: "14d",
+				}),
+			],
+		});
+
+		cacheLogger.log("cache", message);
+	}
+
 	public static client(message: string): void {
 		// new logger with level 'server'
 		const clientLogger = createLogger({
@@ -221,8 +258,7 @@ class logger {
 		this.info(`Platform: ${os.platform()}`);
 		this.info(`CPU: ${os.cpus()[0].model}`);
 		this.info(`PID: ${process.pid}`);
-		this.info("_____________________________________________________");
-		console.log(); // tslint:disable-line
+		this.info("_____________________________________________________\n");
 	}
 }
 

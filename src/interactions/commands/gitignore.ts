@@ -40,7 +40,7 @@ export default {
 			selectInstance.execute(i, uid)
 		);
 
-		selectCollector.on("end", async (i: any) => reply.delete());
+		selectCollector.on("end", async () => reply.delete());
 		buttonCollector.on("collect", async (i: any) => {
 			const { customId } = i;
 

@@ -1,15 +1,4 @@
-import {
-	Client,
-	Partials,
-	GatewayIntentBits,
-	Collection,
-	REST,
-	Routes,
-	EmbedBuilder,
-	Channel,
-	ChannelType,
-	ActionRowBuilder,
-} from "discord.js";
+import { Client, GatewayIntentBits, Collection } from "discord.js";
 import env from "../utils/env.process";
 import logger from "../utils/logger";
 import EventHandler from "../handlers/event.handler";

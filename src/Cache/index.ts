@@ -16,7 +16,7 @@ export default class RedisClient {
 		} as RedisClientOptions);
 
 		this.client.on("connect", () => {
-			logger.client(`📂 Connected to Redis`);
+			logger.cache("📂 Connected to Redis");
 		});
 
 		this.client.on("error", (error) => {
@@ -24,11 +24,11 @@ export default class RedisClient {
 		});
 
 		this.client.on("end", () => {
-			logger.client(`📂 Disconnected from Redis`);
+			logger.cache("📂 Disconnected from Redis");
 		});
 
 		this.client.on("reconnecting", () => {
-			logger.client(`📂 Reconnecting to Redis`);
+			logger.cache("📂 Reconnecting to Redis");
 		});
 	}
 
@@ -41,24 +41,43 @@ export default class RedisClient {
 	}
 
 	async getById(id: string): Promise<any> {
-		logger.client(`📂 Getting gitignore:${id} from cache`);
-		const value = await this.client.json.get(`gitignore:${id}`);
+		try {
+			logger.cache(`📂 Getting gitignore:${id} from cache`);
+			const value = await this.client.json.get(`gitignore:${id}`);
 
-		if (!value) return null;
+			if (!value) return null;
 
-		return value;
+			return value;
+		} catch (error) {
+			logger.error(
+				`📂 Error getting gitignore:${id} from cache: ${error}`
+			);
+			return null;
+		}
 	}
 
 	async set(id: string, data: any, expiration?: number): Promise<void> {
-		const now = Math.floor(Date.now() / 1000);
-		if (!data.created_at) data.created_at = now;
-		if (!data.expires_at && expiration) data.expires_at = now + expiration;
+		try {
+			const now = Math.floor(Date.now() / 1000);
+			if (!data.created_at) data.created_at = now;
+			if (!data.expires_at && expiration)
+				data.expires_at = now + expiration;
 
-		await this.client.json.set(`gitignore:${id}`, `$`, data);
-		if (expiration) await this.client.expire(`gitignore:${id}`, expiration);
+			await this.client.json.set(`gitignore:${id}`, "$", data);
+			if (expiration)
+				await this.client.expire(`gitignore:${id}`, expiration);
+		} catch (error) {
+			logger.error(`📂 Error setting gitignore:${id} in cache: ${error}`);
+		}
 	}
 
 	async delete(id: string): Promise<void> {
-		await this.client.del(`gitignore:${id}`);
+		try {
+			await this.client.del(`gitignore:${id}`);
+		} catch (error) {
+			logger.error(
+				`📂 Error deleting gitignore:${id} from cache: ${error}`
+			);
+		}
 	}
 }
