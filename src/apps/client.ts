@@ -59,7 +59,29 @@ export default class DiscordClient extends Client {
 		const client = DiscordClient.getInstance();
 		return client.applications;
 	}
+
+	public async delete(): Promise<void> {
+		try {
+			// delete all commands
+			const commands = DiscordClient.getCommands();
+			const applications = DiscordClient.getApplications();
+
+			// delete all commands
+			for (const command of commands.values()) {
+				await command.delete();
+			}
+
+			// delete all applications
+			for (const application of applications.values()) {
+				await application.delete();
+			}
+			process.exit(0);
+		} catch (error: any) {
+			logger.error(error);
+			process.exit(1);
+		}
+	}
 }
 
 // run start
-new DiscordClient().start();
+// new DiscordClient().start();

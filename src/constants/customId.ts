@@ -50,11 +50,11 @@ export const TemplateId = {
 	},
 	Backups: {
 		value: "Backups",
-		file: "templates/Backups.gitignore",
+		file: "templates/Backup.gitignore",
 	},
 	Certificates: {
 		value: "Certificates",
-		file: "templates/Certificates.gitignore",
+		file: "templates/certificates.gitignore",
 	},
 	Compressed: {
 		value: "Compressed",
@@ -74,7 +74,7 @@ export const TemplateId = {
 	},
 	Dotenv: {
 		value: "Dotenv",
-		file: "templates/Dotenv.gitignore",
+		file: "templates/dotenv.gitignore",
 	},
 	Firebase: {
 		value: "Firebase",
@@ -82,7 +82,7 @@ export const TemplateId = {
 	},
 	Fonts: {
 		value: "Fonts",
-		file: "templates/Fonts.gitignore",
+		file: "templates/Font.gitignore",
 	},
 	Git: {
 		value: "Git",
@@ -106,7 +106,7 @@ export const TemplateId = {
 	},
 	Tests: {
 		value: "Tests",
-		file: "templates/Tests.gitignore",
+		file: "templates/Test.gitignore",
 	},
 	Text: {
 		value: "Text",
@@ -118,7 +118,7 @@ export const TemplateId = {
 	},
 	Yarn: {
 		value: "Yarn",
-		file: "templates/Yarn.gitignore",
+		file: "templates/yarn.gitignore",
 	},
 };
 
@@ -145,7 +145,7 @@ export const FrameworkId = {
 	},
 	React: {
 		value: "React",
-		file: "framework/React.gitignore",
+		file: "framework/react.gitignore",
 	},
 	Vercel: {
 		value: "Vercel",
@@ -160,7 +160,7 @@ export const FrameworkId = {
 export const LanguageId = {
 	ASPNET: {
 		value: "ASPNET",
-		file: "code/ASPNET.gitignore",
+		file: "code/ASPNETCore.gitignore",
 	},
 	Django: {
 		value: "Django",
@@ -231,7 +231,7 @@ export const ApplicationId = {
 	},
 	MacOS: {
 		value: "MacOS",
-		file: "application/MacOS.gitignore",
+		file: "application/macOS.gitignore",
 	},
 	Swift: {
 		value: "Swift",

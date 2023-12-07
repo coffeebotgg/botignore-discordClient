@@ -6,6 +6,8 @@ import {
 import { initEmbed, buttonsEmbed } from "../../template/embeds";
 import SelectHandler from "../../handlers/selectMenu.handler";
 import { buttonId } from "../../constants/customId";
+import logger from "../../utils/logger";
+import fs from "fs";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -13,6 +15,7 @@ export default {
 		.setDescription("Generate a gitignore file")
 		.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
 	async execute(interaction: any) {
+		const { channel } = interaction;
 		const { embed, rows } = initEmbed();
 
 		const reply = await interaction.reply({
@@ -45,6 +48,35 @@ export default {
 			const { customId } = i;
 
 			switch (customId) {
+				case buttonId.generate:
+					i.deferUpdate();
+					const code = await selectInstance.Generate(uid);
+
+					if (code == 200) {
+						try {
+							channel.send({
+								content: `<@${uid}> Here is your gitignore file!`,
+								// add the newly created file to the message and rename it to .gitignore
+								files: [
+									{
+										attachment: `${__dirname}/../../temp/${uid}.gitignore`,
+										name: ".gitignore",
+									},
+								],
+							});
+						} catch (error: any) {
+							logger.error(error);
+						}
+						i.deleteReply();
+						selectInstance.Reset(uid);
+					} else {
+						i.editReply({
+							content: `Something went wrong!\n Try again later.`,
+							ephemeral: true,
+						});
+					}
+
+					break;
 				case buttonId.reset:
 					i.deferUpdate();
 					selectInstance.Reset(uid);

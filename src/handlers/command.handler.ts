@@ -3,20 +3,21 @@ import logger from "../utils/logger";
 import { globSync } from "glob";
 import DiscordClient from "../apps/client";
 import env from "../utils/env.process";
+import { rootDir } from "../../config";
 
 export default class CommandHandler {
 	private readonly rest = new REST({ version: "9" }).setToken(env.token!);
 	private readonly commands = new Map<string, string>();
 
 	public async loadCommands(client: DiscordClient): Promise<void> {
-		const root = process.cwd();
 		const files = globSync("./src/interactions/commands/**/*.ts");
 		const loadedCommands: string[] = [];
 
 		logger.client(`🔃 Loading ${files.length} commands...`);
+		// this.deleteAllCommands(client);
 
 		for (const file of files) {
-			const filePath = `${root}/${file}`;
+			const filePath = `${rootDir}/${file}`;
 			const command = await import(filePath);
 
 			if (
@@ -27,22 +28,9 @@ export default class CommandHandler {
 				continue;
 
 			// prod
-			if (env.prod) {
-				this.rest.put(Routes.applicationCommands(client.user!.id), {
-					body: command.default.data,
-				});
-			} else {
-				// https://discord.com/api/oauth2/authorize?client_id=1169750328292429834&permissions=551903332352&scope=bot
-				this.rest.post(
-					Routes.applicationGuildCommands(
-						client.user!.id,
-						"1133399514707935344"
-					),
-					{
-						body: command.default.data,
-					}
-				);
-			}
+			this.rest.post(Routes.applicationCommands(client.user!.id), {
+				body: command.default.data,
+			});
 
 			// add command to clients collection
 			DiscordClient.addCommand(command);
@@ -51,5 +39,17 @@ export default class CommandHandler {
 		}
 
 		logger.client(`✅ Loaded ${loadedCommands.length} commands!`);
+	}
+
+	public async deleteAllCommands(client: DiscordClient): Promise<void> {
+		const commands = await client.application?.commands.fetch();
+
+		if (!commands) return;
+
+		for (const command of commands.values()) {
+			this.rest.delete(
+				Routes.applicationCommand(client.user!.id, command.id)
+			);
+		}
 	}
 }

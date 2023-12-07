@@ -17,9 +17,9 @@ const error = new EmbedBuilder()
 const buttons = (backEnabled: boolean = false, uid: string) => {
 	const buttons = new ActionRowBuilder();
 	const Generate = new ButtonBuilder()
-		.setURL(`${env.host}/api/v1/generate/${uid}`)
-		.setLabel("Download")
-		.setStyle(ButtonStyle.Link);
+		.setCustomId(buttonId.generate)
+		.setLabel("Generate")
+		.setStyle(ButtonStyle.Primary);
 	const Back = new ButtonBuilder()
 		.setCustomId(buttonId.back)
 		.setLabel("Back")

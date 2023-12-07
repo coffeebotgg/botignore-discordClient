@@ -3,11 +3,11 @@ import { globSync } from "glob";
 import CommandHandler from "./command.handler";
 import env from "../utils/env.process";
 import DiscordClient from "../apps/client";
+import { rootDir } from "../../config";
 
 export default class EventHandler {
 	public async loadEvents(client: DiscordClient): Promise<void> {
 		// load event files
-		const root = process.cwd();
 		const files = globSync("./src/interactions/events/**/*.ts");
 		const loadedEvents: string[] = [];
 
@@ -15,7 +15,7 @@ export default class EventHandler {
 		logger.client(`🔃 Loading ${files.length} events...`);
 
 		for (const file of files) {
-			const filePath = `${root}/${file}`;
+			const filePath = `${rootDir}/${file}`;
 			const event = await import(filePath);
 
 			// missing event name or execute function

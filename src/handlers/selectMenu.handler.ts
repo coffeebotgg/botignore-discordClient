@@ -7,7 +7,7 @@ import { selectmenuId } from "../constants/customId";
 import { IHashTableData } from "../interfaces/hashtable.interface";
 import logger from "../utils/logger";
 import { embedGen, buttonsEmbed } from "../template/embeds";
-import RedisClient from "../Cache";
+import bufferFile from "../functions/createBuffer";
 
 import {
 	InitOptions,
@@ -18,6 +18,8 @@ import {
 	ApplicationOptions,
 } from "../template/selectMenu/options";
 
+import { GitignoreModels } from "../database/resolvers";
+import generateFile from "../functions/generateFile";
 export default class SelectHandler {
 	public instance: SelectHandler;
 	private interaction: any;
@@ -60,12 +62,9 @@ export default class SelectHandler {
 
 	private async saveData(values: string[], uid: string, customId: string) {
 		try {
-			const redis = new RedisClient();
-			await redis.connect();
+			const preview = await GitignoreModels.get(uid);
 
-			const preview = (await redis.getById(
-				uid
-			)) as unknown as IHashTableData;
+			const unixtime = Math.floor(Date.now() / 1000);
 
 			const data: IHashTableData = {
 				uid: uid,
@@ -73,13 +72,11 @@ export default class SelectHandler {
 					...preview?.selections,
 					[customId]: values,
 				},
-				created_at: preview?.created_at,
-				expires_at: preview?.expires_at,
+				created_at: preview?.created_at || unixtime,
+				expires_at: preview?.expires_at || unixtime + 3600,
 			};
 
-			// 1h expiration
-			await redis.set(uid, data, 3600);
-			await redis.disconnect();
+			await GitignoreModels.set(uid, data);
 
 			this.SwitchMenu(customId, uid);
 		} catch (error: any) {
@@ -89,16 +86,21 @@ export default class SelectHandler {
 
 	public async Reset(uid: string) {
 		try {
-			const redis = new RedisClient();
-			await redis.connect();
-
-			await redis.delete(uid);
-			await redis.disconnect();
-
+			await GitignoreModels.delete(uid);
 			this.SwitchMenu(selectmenuId.select, uid);
 		} catch (error: any) {
 			logger.error(error);
 		}
+	}
+
+	public async Generate(uid: string) {
+		const { code, response } = await generateFile(uid);
+
+		if (code == 200) {
+			await bufferFile(response.file, uid);
+		}
+
+		return code;
 	}
 
 	public async SwitchMenu(value: string, uid: string) {
